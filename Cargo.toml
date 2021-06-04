@@ -1,0 +1,15 @@
+[package]
+name = "RustImageGruber"
+version = "0.1.0"
+authors = ["OzoNeTT <gpoff12@mail.ru>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rand = "0.8.0"
+image = "0.23.14"
+reqwest = { version = "0.11", features = ["blocking", "json"] }
+attohttpc = { version = "0.17", features = ["json", "form"] }
+tokio = { version = "1", features = ["full"] }
+bytes = "1.0.1"
