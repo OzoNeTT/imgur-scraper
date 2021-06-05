@@ -10,6 +10,5 @@ edition = "2018"
 rand = "0.8.0"
 image = "0.23.14"
 reqwest = { version = "0.11", features = ["blocking", "json"] }
-attohttpc = { version = "0.17", features = ["json", "form"] }
 tokio = { version = "1", features = ["full"] }
 bytes = "1.0.1"
