@@ -18,46 +18,61 @@ use std::str::FromStr;
 //TODO : Get normal distribution
 
 fn get_random_string(length: usize) -> String{
-    thread_rng()
+    let s1: String = thread_rng()
         .sample_iter(&Alphanumeric)
-        .take(length)
+        .take(length / 2)
         .map(char::from)
-        .collect()
+        .collect();
+    let s2: String =  thread_rng()
+        .sample_iter(&Alphanumeric)
+        .take(length / 2)
+        .map(char::from)
+        .collect();
+    format!("{}{}", s1, s2)
 
 }
 
-fn check_if_list(length_buf: u64) -> bool {
-    let list = vec![0, 503, 5082, 4939, 4339, 4940, 4941, 12003, 5556];
+fn check_if_list(length_buf: usize) -> bool {
+    let list = vec![0, 503, 5082, 4939, 4940, 4941, 12003, 5556, 5553];
     list.contains(&length_buf)
 }
 
 async fn save_image(path: &String){
-    let filename: String = get_random_string(7);
+    let filename: String = get_random_string(6);
 
     let url: String = format!("{}{}{}", "https://i.imgur.com/", filename, ".jpg");
 
-    //TODO: Check for response code and change length from 7 to 6!
-    let image_bytes = reqwest::get(&url)
+    let content = reqwest::get(&url)
         .await.unwrap()
-        .bytes()
+        .text()
         .await.unwrap();
 
-    let image = image::load_from_memory(&image_bytes).unwrap();
+    if !check_if_list(content.len()){
 
-    let breiunos = format!("{}{}{}", path, filename, ".jpg");
+        let image_bytes = reqwest::get(&url)
+            .await.unwrap()
+            .bytes()
+            .await.unwrap();
 
-    let mut newpath = Path::new(&breiunos);
+        let image = image::load_from_memory(&image_bytes).unwrap();
 
-    image.save(newpath)
-        .unwrap();
+        let breiunos = format!("{}{}{}", path, filename, ".jpg");
 
-    let metadata = metadata(newpath).unwrap();
+        let mut newpath = Path::new(&breiunos);
 
-    if check_if_list(metadata.len()) {
-        println!("[-] Invalid: {}", url);
-        remove_file(newpath).unwrap();
+        image.save(newpath)
+            .unwrap();
+
+        //unused?
+        let metadata = metadata(newpath).unwrap();
+        if metadata.len() == 4339 {
+            println!("[-] Invalid: {}", url);
+            remove_file(newpath).unwrap();
+        } else {
+            println!("[+] Valid: {}", url);
+        }
     } else {
-        println!("[+] Valid: {}", url);
+        println!("[-] Invalid: {}", url);
     }
 
 }
